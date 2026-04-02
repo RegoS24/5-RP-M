@@ -1,0 +1,338 @@
+* {
+  margin: 0;
+  padding: 0;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+:root {
+  --checkbox-size: 32px;
+  --lottery-quantity-min-width: 18px;
+  --lottery-btn-size: 28px;
+  --bg-color: #ffffff;
+  --text-arrow: #f3f3f3;
+  --text-color: #ffffff;
+  --header-color: #2b2b2b;
+  --table-bg: #737373;
+  --table-bgd: #bbbbbbbb;
+  --table-border: #f0f0f0;
+  --button-bg: transparent;
+  --button-text: #2b2b2b;
+  --checkbox-text: #737373;
+  --checkbox-border: #737373;
+  --checkbox-checked: #f8981d;
+  --theme-btn-bg: #2b2b2b;
+  --theme-btn-text: #f3f3f3;
+  --progress-text: #fffce9;
+  --progress-bg: #737373;
+  --progress-fill-gradient: linear-gradient(90deg, #c5750d, #f8981d);
+  --custom-checkbox: #fffce9;
+  --quantity-display: #2b2b2b;
+}
+
+[data-theme="dark"] {
+  --bg-color: #151517;
+  --text-color: #f3f3f3;
+  --table-bg: #2b2b2b96;
+  --table-bgd: #1b1c20;
+  --table-border: #111111;
+  --button-text: #f3f3f3;
+  --checkbox-text: #737373;
+  --checkbox-border: #737373;
+  --progress-text: #fffce9;
+  --progress-bg: #737373;
+  --quantity-display: #f3f3f3;
+}
+
+body {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--button-text);
+  transition: all 0.3s ease;
+  min-height: 100vh;
+}
+
+/* 2. КОНТЕЙНЕР: Центрируем и задаем базу */
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* 3. ШАПКА (STICKY) */
+.total {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px 15px;
+  background-color: var(--table-border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.header-right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+#totalDisplay, #remainingDisplay {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--checkbox-checked);
+}
+
+/* 4. ПРОГРЕСС-БАР */
+.progress-container {
+  width: 100%;
+  padding: 5px 0; /* Небольшой отступ для красоты */
+}
+
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background: var(--progress-bg);
+  border-radius: 12px;
+  overflow: hidden; /* Обрезает заливку по радиусу */
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); /* Внутренняя тень для объема */
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%; /* Начальное значение */
+  background: var(--progress-fill-gradient);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px 0 0 12px;
+}
+
+.progress-percent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--progress-text) !important;
+  z-index: 10;
+  pointer-events: none;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* 5. ОПЦИИ (VIP/X2) В ОДНУ СТРОКУ */
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  margin-top: 5px;
+}
+
+.vipcheckmark, .x2checkmark {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--checkbox-text);
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked + .vipcheckmark,
+input[type="checkbox"]:checked + .x2checkmark {
+  color: var(--checkbox-checked);
+}
+
+/* 6. ТАБЛИЦА */
+.left-cell {
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reward {
+  width: 50px;
+  text-align: center;
+  min-width: 50px;
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tasks-column {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color: var(--table-bgd);
+  margin-bottom: 80px !important; 
+}
+
+.tasks-column td {
+  height: 50px;
+  border-bottom: 1px solid var(--table-border);
+  vertical-align: middle;
+}
+
+/* 7. ИСПРАВЛЕННЫЙ НИЖНИЙ БАР (ФИКСИРОВАННЫЙ) */
+.hide-on-scroll {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 80px;
+  padding: 0 10px;
+  background-color: var(--table-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+/* 8. КНОПКИ В БАРЕ */
+#resetBtn {
+  flex-grow: 1;
+  height: 45px;
+  background: #a50000;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.logo-toggle {
+  width: 45px;
+  height: 45px;
+  background: var(--checkbox-checked);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 9. ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ */
+.custom-checkbox input, .custom-vipcheckbox input, .custom-x2checkbox input {
+  display: none;
+}
+
+.checkmark {
+  display: inline-block;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  border: 2px solid var(--checkbox-border);
+  border-radius: 8px;
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-checkbox input:checked + .checkmark {
+  background-color: var(--checkbox-checked);
+  border-color: var(--checkbox-checked);
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--custom-checkbox);
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  display: block;
+}
+
+.checkbox-cell {
+  width: 60px;
+  text-align: center;
+  width: 60px; 
+}
+
+.checkbox-cell .custom-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.lottery-cell {
+  width: 110px;
+  text-align: center;
+}
+
+.lottery-controls {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 6px;
+  justify-content: center;
+}
+
+.lottery-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.arrow-btn {
+  width: var(--lottery-btn-size);
+  height: var(--lottery-btn-size);
+  background: var(--table-bg);
+  border: 2px solid var(--checkbox-border);
+  color: var(--custom-checkbox);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1
+}
+
+.arrow-btn:active {
+  background: var(--checkbox-checked);
+}
+
+.quantity-display {
+  min-width: var(--lottery-quantity-min-width);
+  color: var(--quantity-display);
+}
+
+.done .left-cell, 
+.done .reward,
+.done .lottery-controls {
+  opacity: 0.5;
+  filter: grayscale(0.5);
+}
+
+.arrow-btn:focus, 
+#themeToggle:focus, 
+#resetBtn:focus {
+    outline: none;
+}
