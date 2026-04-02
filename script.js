@@ -22,30 +22,40 @@ document.addEventListener("DOMContentLoaded", function () {
     allRows.forEach(row => {
         const cb = row.querySelector(".task-checkbox");
         const rewardCell = row.querySelector(".reward");
+        const quantityDisplay = row.querySelector(".quantity-display");
+
         if (!cb || !rewardCell) return;
 
-        // 1. Получаем базовые значения
+        // 1. Получаем значения из атрибутов
         const baseValue = parseInt(rewardCell.getAttribute("data-without")) || 0;
         const vipValue = parseInt(rewardCell.getAttribute("data-with")) || 0;
 
-        // 2. Рассчитываем текущую награду в зависимости от чекбоксов VIP и X2
+        // 2. Считаем текущую награду (VIP и X2)
         let currentReward = vipCheckbox.checked ? vipValue : baseValue;
         if (x2Checkbox.checked) currentReward *= 2;
 
-        // 3. ОБНОВЛЯЕМ ТЕКСТ В ТАБЛИЦЕ (то, что ты просил)
+        // 3. Обновляем текст в таблице
         rewardCell.textContent = currentReward + " BP";
 
-        // 4. Считаем общие суммы
+        // 4. Считаем общую возможную сумму
         totalPossibleBP += currentReward;
+
+        // 5. Логика для ВЫПОЛНЕННОГО задания
         if (cb.checked) {
             totalBP += currentReward;
             row.classList.add("done");
+
+            // Сбрасываем счетчик лотереи в 0 только если чекбокс нажат
+            if (quantityDisplay) {
+                quantityDisplay.textContent = "0";
+            }
         } else {
+            // Если чекбокс не нажат
             row.classList.remove("done");
         }
     });
 
-    // Обновление интерфейса (проценты и плашки)
+    // 6. Обновляем итоговые показатели (прогресс-бар и цифры сверху)
     totalDisplay.textContent = totalBP + " BP";
     remainingDisplay.textContent = (totalPossibleBP - totalBP) + " BP";
 
@@ -53,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
     progressFill.style.width = percent + "%";
     progressPercent.textContent = percent + "%";
     }
-
   /**
    * Обработка лотерейных кнопок
    */
@@ -127,4 +136,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Первоначальный запуск
   updateProgress();
+});
+
+// 1. Объявляем переменную в области видимости файла
+let sortableInstance;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const taskBody = document.getElementById('taskBody');
+    const dragBtn = document.getElementById('dragToggle'); // Объявляем один раз тут
+    const dragIcon = document.getElementById('dragIcon');
+    let isDragEnabled = false;
+
+    if (!taskBody || !dragBtn) return;
+
+    // 2. Инициализация библиотеки
+    sortableInstance = new Sortable(taskBody, {
+        animation: 150,
+        handle: '.left-cell',
+        forceFallback: true,
+        fallbackClass: "sortable-drag",
+        ghostClass: "sortable-ghost",
+        disabled: true,
+    
+        onStart: function () {
+            document.body.classList.add('is-dragging');
+        },
+        onEnd: function () {
+            document.body.classList.remove('is-dragging');
+        }
+    });
+
+    // 3. Логика кнопки
+    dragBtn.addEventListener('click', () => {
+        isDragEnabled = !isDragEnabled;
+        
+        // Переключаем состояние Sortable
+        if (sortableInstance) {
+            sortableInstance.option("disabled", !isDragEnabled);
+        }
+        
+        // Визуальное переключение кнопки и body
+        dragBtn.classList.toggle('active', isDragEnabled);
+        document.body.classList.toggle('drag-mode-on', isDragEnabled);
+        
+        // Смена иконок (проверяем наличие иконки перед заменой)
+        if (dragIcon) {
+            if (isDragEnabled) {
+                dragIcon.classList.replace('fi-rr-edit', 'fi-rr-padlock-check');
+            } else {
+                dragIcon.classList.replace('fi-rr-padlock-check', 'fi-rr-edit');
+            }
+        }
+    });
 });

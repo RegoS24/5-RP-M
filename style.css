@@ -14,12 +14,12 @@
   --checkbox-size: 32px;
   --lottery-quantity-min-width: 18px;
   --lottery-btn-size: 28px;
-  --bg-color: #ffffff;
+  --bg-color: #737373;
   --text-arrow: #f3f3f3;
   --text-color: #ffffff;
   --header-color: #2b2b2b;
   --table-bg: #737373;
-  --table-bgd: #bbbbbbbb;
+  --table-bgd: #ffffffbb;
   --table-border: #f0f0f0;
   --button-bg: transparent;
   --button-text: #2b2b2b;
@@ -33,6 +33,7 @@
   --progress-fill-gradient: linear-gradient(90deg, #c5750d, #f8981d);
   --custom-checkbox: #fffce9;
   --quantity-display: #2b2b2b;
+  --drag-shadow: rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="dark"] {
@@ -47,6 +48,7 @@
   --progress-text: #fffce9;
   --progress-bg: #737373;
   --quantity-display: #f3f3f3;
+  --drag-shadow: rgba(0, 0, 0, 0.6);
 }
 
 body {
@@ -155,37 +157,69 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 /* 6. ТАБЛИЦА */
-.left-cell {
-  text-align: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 0 18px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.reward {
-  width: 50px;
-  text-align: center;
-  min-width: 50px;
-  font-variant-numeric: tabular-nums;
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .tasks-column {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-  background-color: var(--table-bgd);
-  margin-bottom: 80px !important; 
+    width: 100%;
+    max-width: 480px; /* Ограничиваем общую ширину, чтобы не была огромной */
+    margin: 0 auto 80px auto; /* Центрируем и даем отступ снизу */
+    table-layout: fixed; /* ГАРАНТИРУЕТ, что колонки будут иметь заданную ширину % */
+    border-collapse: collapse;
+    background-color: var(--table-bgd);
 }
 
 .tasks-column td {
-  height: 50px;
-  border-bottom: 1px solid var(--table-border);
-  vertical-align: middle;
+    height: 50px;
+    border-bottom: 1px solid var(--table-border);
+    vertical-align: middle;
+}
+
+/* Пропорции колонок */
+.left-cell { width: 40%; text-align: left; padding: 0 18px; }
+.reward    { width: 20%; text-align: center; }
+.lottery   { width: 30%; }
+.check     { width: 10%; }
+
+.left-cell {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ЭФФЕКТ ПЕРЕТАСКИВАНИЯ (SortableJS) */
+.sortable-drag {
+    opacity: 1 !important;
+    background-color: var(--table-bgd) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+    transform: scale(1.05); /* Карточка чуть больше */
+    z-index: 9999 !important;
+    
+    display: table !important; 
+    max-width: 480px !important;
+    table-layout: fixed !important;
+    border-radius: 8px;
+    cursor: grabbing !important;
+}
+
+/* Чтобы ячейки внутри летящей строки не разъехались */
+.sortable-drag td {
+    background-color: var(--table-bgd) !important;
+    border: none !important; /* Убираем линии при полете */
+}
+
+/* Пустое место (куда упадет карточка) */
+.sortable-ghost {
+    opacity: 0.2 !important;
+    background-color: var(--checkbox-border) !important;
+}
+
+.reward {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* 7. ИСПРАВЛЕННЫЙ НИЖНИЙ БАР (ФИКСИРОВАННЫЙ) */
@@ -316,9 +350,8 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 .arrow-btn:active {
-  background: var(--checkbox-checked);
+  transform: scale(0.9);
 }
-
 .quantity-display {
   min-width: var(--lottery-quantity-min-width);
   color: var(--quantity-display);
@@ -327,7 +360,7 @@ input[type="checkbox"]:checked + .x2checkmark {
 .done .left-cell, 
 .done .reward,
 .done .lottery-controls {
-  opacity: 0.5;
+  opacity: 0.1;
   filter: grayscale(0.5);
 }
 
@@ -335,4 +368,91 @@ input[type="checkbox"]:checked + .x2checkmark {
 #themeToggle:focus, 
 #resetBtn:focus {
     outline: none;
+}
+
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--table-border);
+  color: var(--text-color);
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+/* --- КНОПКА АКТИВИЗАЦИИ (Bottom Bar) --- */
+.icon-btn {
+    width: 45px;
+    height: 45px;
+    background: transparent;
+    border-color: transparent;
+    background-color: var(--checkbox-checked) !important;
+    color: var(--table-border) !important;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    outline: none;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn:active {
+    transform: scale(0.9); /* Эффект нажатия */
+}
+
+/* Состояние, когда режим перетаскивания ВКЛЮЧЕН */
+#dragToggle.active {
+    background-color: var(--checkbox-checked) !important;
+    color: var(--table-border) !important;
+    border-color: transparent;
+}
+
+/* --- УПРАВЛЕНИЕ КУРСОРOM И ЗАХВАТОМ --- */
+
+/* 1. Когда режим включен (кнопка активна) */
+body.drag-mode-on .left-cell {
+    cursor: grab !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* 2. Когда зажали левую кнопку мыши на ячейке */
+body.drag-mode-on .left-cell:active {
+    cursor: grabbing !important;
+}
+
+/* 3. ФИКСАЦИЯ КУЛАЧКА во время движения (чтобы не разжимался) */
+body.is-dragging, 
+body.is-dragging * {
+    cursor: grabbing !important;
+}
+
+/* Дополнительно: стиль летящей карточки для SortableJS */
+.sortable-drag {
+    cursor: grabbing !important;
+    opacity: 1 !important;
+    background-color: var(--table-bgd) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+    transform: scale(1.05);
+    z-index: 9999 !important;
+    display: table !important; 
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-radius: 8px;
+}
+
+/* Скрываем пустое место (куда упадет карточка) */
+.sortable-ghost {
+    opacity: 0.2 !important;
+    background-color: var(--checkbox-border) !important;
 }
