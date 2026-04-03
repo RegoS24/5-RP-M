@@ -26,6 +26,12 @@ document.addEventListener("DOMContentLoaded", function () {
             fallbackClass: "sortable-drag",
             ghostClass: "sortable-ghost",
             disabled: true,
+            
+            scroll: true,
+            scrollSensitivity: 50,
+            scrollSpeed: 10,
+            bubbleScroll: false,
+            
             onStart: () => document.body.classList.add('is-dragging'),
             onEnd: () => {
                 document.body.classList.remove('is-dragging');
@@ -33,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+    
 
     // 3. Функции LocalStorage
     function saveAllData() {
