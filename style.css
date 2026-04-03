@@ -173,9 +173,7 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 .tasks-column {
-    width: 100%;
-    max-width: 480px; /* Ограничиваем общую ширину, чтобы не была огромной */
-    margin: 0 auto 80px auto; /* Центрируем и даем отступ снизу */
+    margin: 0 auto 80px auto;
     table-layout: fixed; /* ГАРАНТИРУЕТ, что колонки будут иметь заданную ширину % */
     border-collapse: collapse;
     background-color: var(--table-bgd);
@@ -188,9 +186,9 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 /* Пропорции колонок */
-.left-cell     { width: 45%; text-align: left; padding: 0 18px; }
-.reward        { width: 15%; text-align: center; }
+.left-cell     { width: 50%; text-align: left; }
 .lottery-cell  { width: 30%; }
+.reward        { width: 10%; text-align: center; }
 .checkbox-cell { width: 10%; min-width: 50px; text-align: center; }
 
 .left-cell {
@@ -199,6 +197,7 @@ input[type="checkbox"]:checked + .x2checkmark {
     text-overflow: ellipsis;
     font-size: 14px;
     font-weight: 600;
+    padding: 0 10px;
     cursor: default;
     user-select: none;
     -webkit-user-select: none;
@@ -320,10 +319,10 @@ input[type="checkbox"]:checked + .x2checkmark {
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  padding: 0 10px;
 }
 
 .lottery-cell {
-  width: 110px;
   text-align: center;
 }
 
