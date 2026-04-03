@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battle Pass Tracker</title>
     <link rel="stylesheet" href="style.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
 </head>
 <body data-theme="light">
     <div class="container">
@@ -276,7 +278,8 @@
                 <tr>
                     <td class="left-cell">Дартс</td>
                     <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td><td class="checkbox-cell">
+                    <td></td>
+                    <td class="checkbox-cell">
                         <label class="custom-checkbox">
                             <input type="checkbox" class="task-checkbox">
                             <span class="checkmark"></span>
@@ -302,13 +305,19 @@
                 </tr>
             </tbody>
         </table>
-    </div> <div class="hide-on-scroll">
-        <button id="dragToggle" class="icon-btn"><i id="dragIcon" class="fi fi-rr-edit"></i></button>
-        <button id="resetBtn">СБРОСИТЬ</button>
-        <button id="themeToggle" class="logo-toggle"><i class="fi fi-br-eclipse-alt"></i></button>
     </div>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="script.js"></script>  
-</body>
+        <div class="hide-on-scroll">
+            <button id="dragToggle" class="icon-btn" title="Переместить">
+                <i id="dragIcon" class="fi fi-rr-edit"></i>
+            </button>
+            <button id="resetBtn">СБРОСИТЬ</button>
+            <button id="themeToggle" class="icon-btn theme-toggle">
+                <i class="fi fi-br-eclipse-alt"></i>
+            </button>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+        <script src="script.js"></script>
+  
+    </body>
 </html>

@@ -173,10 +173,10 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 /* Пропорции колонок */
-.left-cell { width: 40%; text-align: left; padding: 0 18px; }
-.reward    { width: 20%; text-align: center; }
-.lottery   { width: 30%; }
-.check     { width: 10%; }
+.left-cell     { width: 45%; text-align: left; padding: 0 18px; }
+.reward        { width: 15%; text-align: center; }
+.lottery-cell  { width: 30%; }
+.checkbox-cell { width: 10%; min-width: 50px; text-align: center; }
 
 .left-cell {
     overflow: hidden;
@@ -189,25 +189,16 @@ input[type="checkbox"]:checked + .x2checkmark {
     -webkit-user-select: none;
 }
 
-/* ЭФФЕКТ ПЕРЕТАСКИВАНИЯ (SortableJS) */
-.sortable-drag {
-    opacity: 1 !important;
-    background-color: var(--table-bgd) !important;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
-    transform: scale(1.05); /* Карточка чуть больше */
-    z-index: 9999 !important;
-    
-    display: table !important; 
-    max-width: 480px !important;
-    table-layout: fixed !important;
-    border-radius: 8px;
-    cursor: grabbing !important;
-}
-
 /* Чтобы ячейки внутри летящей строки не разъехались */
 .sortable-drag td {
+    display: table-cell !important;
+    vertical-align: middle;
+    border: none !important;
     background-color: var(--table-bgd) !important;
-    border: none !important; /* Убираем линии при полете */
+}
+
+.sortable-drag .checkbox-cell {
+  width: 60px !important;
 }
 
 /* Пустое место (куда упадет карточка) */
@@ -302,9 +293,9 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 .checkbox-cell {
-  width: 60px;
+  width: 10%;
   text-align: center;
-  width: 60px; 
+  min-width: 60px; 
 }
 
 .checkbox-cell .custom-checkbox {
@@ -370,20 +361,6 @@ input[type="checkbox"]:checked + .x2checkmark {
     outline: none;
 }
 
-.icon-btn {
-  background: transparent;
-  border: 1px solid var(--table-border);
-  color: var(--text-color);
-  padding: 8px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  outline: none;
-}
-
 /* --- КНОПКА АКТИВИЗАЦИИ (Bottom Bar) --- */
 .icon-btn {
     width: 45px;
@@ -439,16 +416,17 @@ body.is-dragging * {
 
 /* Дополнительно: стиль летящей карточки для SortableJS */
 .sortable-drag {
-    cursor: grabbing !important;
-    opacity: 1 !important;
-    background-color: var(--table-bgd) !important;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
-    transform: scale(1.05);
-    z-index: 9999 !important;
-    display: table !important; 
-    width: 100% !important;
-    table-layout: fixed !important;
-    border-radius: 8px;
+  display: table !important; /* Критично: заставляем клон работать как таблица */
+  width: 100% !important;
+  max-width: 480px !important;
+  table-layout: fixed !important; /* Чтобы проценты ширины внутри работали */
+  opacity: 1 !important;
+  background-color: var(--table-bgd) !important;
+  box-shadow: 0 15px 35px var(--drag-shadow) !important;
+  transform: scale(1.02); 
+  z-index: 9999 !important;
+  border-radius: 8px;
+  border-collapse: collapse; /* Чтобы не было лишних отступов */
 }
 
 /* Скрываем пустое место (куда упадет карточка) */
