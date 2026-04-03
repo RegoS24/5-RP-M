@@ -325,6 +325,10 @@ input[type="checkbox"]:checked + .x2checkmark {
   gap: 12px;
 }
 
+.data-target {
+  width: 25px;
+}
+
 .arrow-btn {
   width: var(--lottery-btn-size);
   height: var(--lottery-btn-size);
@@ -343,6 +347,13 @@ input[type="checkbox"]:checked + .x2checkmark {
 .arrow-btn:active {
   transform: scale(0.9);
 }
+
+.arrow-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none; /* Полностью отключает клики на уровне браузера */
+}
+
 .quantity-display {
   min-width: var(--lottery-quantity-min-width);
   color: var(--quantity-display);

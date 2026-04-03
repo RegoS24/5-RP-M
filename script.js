@@ -94,39 +94,44 @@ document.addEventListener("DOMContentLoaded", function () {
         let totalBP = 0;
         let totalPossibleBP = 0;
         const allRows = document.querySelectorAll("#taskBody tr");
-
+    
         allRows.forEach(row => {
             const cb = row.querySelector(".task-checkbox");
             const rewardCell = row.querySelector(".reward");
             const quantityDisplay = row.querySelector(".quantity-display");
-
+            const lotteryButtons = row.querySelectorAll(".arrow-btn"); // Находим кнопки управления
+    
             if (!cb || !rewardCell) return;
-
+    
             const baseValue = parseInt(rewardCell.getAttribute("data-without")) || 0;
             const vipValue = parseInt(rewardCell.getAttribute("data-with")) || 0;
-
+    
             let currentReward = vipCheckbox.checked ? vipValue : baseValue;
             if (x2Checkbox.checked) currentReward *= 2;
-
+    
             rewardCell.textContent = currentReward + " BP";
             totalPossibleBP += currentReward;
-
+    
             if (cb.checked) {
                 totalBP += currentReward;
                 row.classList.add("done");
+                // Блокируем кнопки, если задание выполнено
+                lotteryButtons.forEach(btn => btn.disabled = true);
             } else {
                 row.classList.remove("done");
+                // Разблокируем кнопки, если галочка снята
+                lotteryButtons.forEach(btn => btn.disabled = false);
             }
         });
-
+    
         totalDisplay.textContent = totalBP + " BP";
         remainingDisplay.textContent = (totalPossibleBP - totalBP) + " BP";
-
+    
         const percent = totalPossibleBP > 0 ? Math.round((totalBP / totalPossibleBP) * 100) : 0;
         progressFill.style.width = percent + "%";
         progressPercent.textContent = percent + "%";
-
-        saveAllData(); // Авто-сохранение при любом изменении
+    
+        if (typeof saveAllData === "function") saveAllData(); 
     }
 
     // 5. Логика кнопки перетаскивания
@@ -163,7 +168,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.addEventListener("change", (e) => {
-        if (e.target.classList.contains("task-checkbox") || e.target === vipCheckbox || e.target === x2Checkbox) {
+        if (e.target.classList.contains("task-checkbox")) {
+            // НОВОЕ: Если галочку сняли вручную
+            if (!e.target.checked) {
+                const row = e.target.closest("tr");
+                const quantityDisplay = row.querySelector(".quantity-display");
+                
+                // Если в этой строке есть счетчик (лотерея и т.д.), сбрасываем его на 0
+                if (quantityDisplay) {
+                    quantityDisplay.textContent = "0";
+                }
+            }
+            updateProgress();
+        } else if (e.target === vipCheckbox || e.target === x2Checkbox) {
             updateProgress();
         }
     });
