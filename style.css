@@ -188,7 +188,7 @@ input[type="checkbox"]:checked + .x2checkmark {
 /* Пропорции колонок */
 .left-cell     { width: 40%; text-align: left; }
 .lottery-cell  { width: 25%; }
-.reward        { width: 15%; text-align: center; }
+.reward        { width: 10%; text-align: center; }
 .checkbox-cell { width: 20%; min-width: 50px; text-align: center; }
 
 .left-cell {
