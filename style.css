@@ -186,10 +186,10 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 /* Пропорции колонок */
-.left-cell     { width: 50%; text-align: left; }
-.lottery-cell  { width: 30%; }
-.reward        { width: 10%; text-align: center; }
-.checkbox-cell { width: 10%; min-width: 50px; text-align: center; }
+.left-cell     { width: 40%; text-align: left; }
+.lottery-cell  { width: 20%; }
+.reward        { width: 20%; text-align: center; }
+.checkbox-cell { width: 20%; min-width: 50px; text-align: center; }
 
 .left-cell {
     overflow: hidden;
