@@ -315,7 +315,7 @@ input[type="checkbox"]:checked + .x2checkmark {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  gap: 1px;
+  gap: 5px;
 }
 
 .lottery-wrapper {
