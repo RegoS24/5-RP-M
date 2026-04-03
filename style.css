@@ -313,9 +313,9 @@ input[type="checkbox"]:checked + .x2checkmark {
 .lottery-controls {
   display: flex;
   align-items: center;
-  font-size: 14px;
-  gap: 6px;
   justify-content: center;
+  font-size: 14px;
+  gap: 1px;
 }
 
 .lottery-wrapper {
@@ -323,10 +323,6 @@ input[type="checkbox"]:checked + .x2checkmark {
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-}
-
-.data-target {
-  width: 25px;
 }
 
 .arrow-btn {
@@ -355,8 +351,12 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 .quantity-display {
-  min-width: var(--lottery-quantity-min-width);
+  width: 20px;
   color: var(--quantity-display);
+}
+
+.data-target {
+  width: 25px;
 }
 
 .done .left-cell, 
