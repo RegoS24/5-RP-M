@@ -186,9 +186,9 @@ input[type="checkbox"]:checked + .x2checkmark {
 }
 
 /* Пропорции колонок */
-.left-cell     { width: 40%; text-align: left; }
-.lottery-cell  { width: 25%; }
-.reward        { width: 10%; text-align: center; }
+.left-cell     { width: 45%; text-align: left; }
+.lottery-cell  { width: 35%; }
+.reward        { width: 15%; text-align: center; }
 .checkbox-cell { width: 20%; min-width: 50px; text-align: center; }
 
 .left-cell {
@@ -225,6 +225,7 @@ input[type="checkbox"]:checked + .x2checkmark {
     font-variant-numeric: tabular-nums;
     font-size: 14px;
     font-weight: 600;
+    padding: 0 0 0 10px;
 }
 
 /* 7. ИСПРАВЛЕННЫЙ НИЖНИЙ БАР (ФИКСИРОВАННЫЙ) */
