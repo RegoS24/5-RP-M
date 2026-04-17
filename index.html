@@ -2,331 +2,206 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battle Pass Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BP Tracker Pro Ultimate</title>
     <link rel="stylesheet" href="style.css">
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
-<body data-theme="light">
-    <div class="container">
-      <div class="total">
-        <div class="header-right">
-            <div>Получено: <span id="totalDisplay">0 BP</span></div>
-            <div>Осталось: <span id="remainingDisplay">0 BP</span></div>
-        </div>
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
-                <div id="progressPercent" class="progress-percent">0%</div>
+<body data-theme="dark" id="appBody">
+
+    <div class="app-wrapper">
+        <main class="content-area">
+            <section id="tab-tasks" class="tab-content active">
+                <header class="header sticky-top">
+                    <div id="headerStats">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="st-label">ПОЛУЧЕНО</span>
+                                <span id="totalDisplay" class="st-val">0 BP</span>
+                            </div>
+                            <div class="stat-item ar">
+                                <span class="st-label">ОСТАЛОСЬ</span>
+                                <span id="remainingDisplay" class="st-val">0 BP</span>
+                            </div>
+                        </div>
+                        <div class="bar-container">
+                            <div id="progressFill" class="bar-fill"></div>
+                        </div>
+                    </div>
+                    <div class="booster-panel">
+                        <label class="bst-card">
+                            <input type="checkbox" id="vipCheckbox">
+                            <span>VIP <b>+100%</b></span>
+                        </label>
+                        <label class="bst-card">
+                            <input type="checkbox" id="x2Checkbox">
+                            <span>X2 <b>BOOST</b></span>
+                        </label>
+                    </div>
+                </header>
+
+                <div id="taskBody" class="list-container"></div>
+
+                <div class="action-zone">
+                    <button id="resetProgressBtn" class="m-btn danger-btn">
+                        <i class="fi fi-rr-refresh"></i> СБРОСИТЬ ПРОГРЕСС
+                    </button>
+                    <button id="dragToggleBtn" class="m-btn secondary">
+                        <i class="fi fi-rr-edit"></i> НАСТРОЙКА СПИСКА
+                    </button>
+                </div>
+            </section>
+
+            <section id="tab-achievements" class="tab-content">
+                <h2 class="tab-title" style="text-align:center; padding: 20px 0; color:var(--accent);">НАГРАДЫ</h2>
+                <div class="ach-grid" id="achContainer"></div>
+            </section>
+
+            <section id="tab-social" class="tab-content">
+                <div class="chat-container"> <div id="chatMessages" class="chat-messages"></div>
+
+                <div class="chat-input-area">
+                    <div id="emojiPicker" class="emoji-picker" style="display: none;">
+                        <span onclick="addEmoji('😊')">😊</span>
+                        <span onclick="addEmoji('😂')">😂</span>
+                        <span onclick="addEmoji('🔥')">🔥</span>
+                        <span onclick="addEmoji('👍')">👍</span>
+                        <span onclick="addEmoji('❤️')">❤️</span>
+                        <span onclick="addEmoji('🚀')">🚀</span>
+                        <span onclick="addEmoji('👑')">👑</span>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <button id="emojiBtn" type="button" class="chat-icon-btn">😊</button>
+                        <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off">
+                        <button id="sendMsg" type="button" class="chat-icon-btn">
+                            <i class="fi fi-sr-paper-plane" style="color: var(--accent); font-size: 20px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-profile" class="tab-content">
+                <div id="profileAuth" style="display:none;" class="profile-box">
+                    <div class="avatar-big" id="profAvatar">👤</div>
+                    <h3 id="profName" style="text-align:center;">USER</h3>
+                    <p id="profRecovery" class="recovery-hint" style="color:var(--dim); font-size:12px; margin-top:5px; text-align:center;"></p>
+                    
+                    <div class="settings-list" style="margin-top:30px;">
+                        <div class="setting-item" id="openEditBtn">
+                            <span><i class="fi fi-rr-settings"></i> Настройки</span>
+                        </div>
+                        <div class="setting-item" id="themeToggleBtn">
+                            <span><i class="fi fi-rr-brush"></i> Тема</span>
+                            <b class="theme-status">DARK</b>
+                        </div>
+                        <div class="setting-item" id="logoutBtn" style="color:var(--danger);">
+                            <span><i class="fi fi-rr-exit"></i> Выйти</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profileGuest" class="profile-box guest" style="padding:40px 20px; text-align:center;">
+                    <div class="avatar-big" style="background:var(--line); margin: 0 auto 20px;">?</div>
+                    <h3 style="margin-bottom: 20px;">ВЫ ГОСТЬ</h3>
+                    <button class="m-btn prm open-auth" style="margin-bottom: 10px;">ВОЙТИ / РЕГИСТРАЦИЯ</button>
+                    <button class="m-btn secondary open-recover">ВОССТАНОВИТЬ ПАРОЛЬ</button>
+                    <a href="admin.html" class="admin-link" style="display:block; margin-top:40px; color:var(--dim); font-size:10px; text-decoration:none;">ПАНЕЛЬ АДМИНИСТРАТОРА</a>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-tab active" data-tab="tasks"><i class="fi fi-rr-list-check"></i><span>Задачи</span></button>
+            <button class="nav-tab" data-tab="achievements"><i class="fi fi-rr-trophy"></i><span>Награды</span></button>
+            <button class="nav-tab" data-tab="social"><i class="fi fi-rr-messages"></i><span>Чат</span></button>
+            <button class="nav-tab" data-tab="profile"><i class="fi fi-rr-user"></i><span>Профиль</span></button>
+        </nav>
+    </div>
+
+    <div id="authOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="authTitle" style="color:var(--accent); margin-bottom:20px;">ВХОД</h2>
+            <input type="text" id="authUser" placeholder="Логин (маленькими буквами)">
+            <input type="password" id="authPass" placeholder="Пароль">
+            
+            <div id="regExtra" style="display:none;">
+                <input type="text" id="authNick" placeholder="Ваш никнейм">
+                <input type="number" id="authCode" placeholder="Секретный код (4 цифры)">
             </div>
+            
+            <button id="submitAuth" class="m-btn prm">ГОТОВО</button>
+            <p id="toggleAuth" style="font-size:12px; margin-top:20px; cursor:pointer; color:var(--dim);">Нет аккаунта? Регистрация</p>
+            <button class="m-btn secondary close-modal" style="margin-top:10px;">ОТМЕНА</button>
         </div>
-    
-        <div class="options">
-            <label class="custom-vipcheckbox">
-                <input type="checkbox" id="vipCheckbox">
-                <span class="vipcheckmark">VIP</span>
-            </label>
-            <label class="custom-x2checkbox">
-                <input type="checkbox" id="x2Checkbox">
-                <span class="x2checkmark">X2</span>
-            </label>
+    </div>
+
+    <div id="recoverOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color:var(--accent); margin-bottom:20px;">ВОССТАНОВЛЕНИЕ</h2>
+            <input type="text" id="recUser" placeholder="Ваш логин">
+            <input type="number" id="recCode" placeholder="Секретный код (4 цифры)">
+            <input type="password" id="recPass" placeholder="Новый пароль">
+            <button id="submitRecover" class="m-btn prm">СМЕНИТЬ ПАРОЛЬ</button>
+            <button class="m-btn secondary close-modal" style="margin-top:10px;">ОТМЕНА</button>
         </div>
-      </div>
-      <div class="table-wrapper">
-        <table class="tasks-column">
-            <tbody id="taskBody">
-                <tr>
-                    <td class="left-cell">Лотерея</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Тир</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Киностудия</td>
-                    <td></td>
-                    <td class="reward" data-without="2" data-with="4">2 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Кинотеатр</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="5">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 5</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Сайт</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Brawl</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Лайк в Match</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Открыть кейс</td>
-                    <td></td>
-                    <td class="reward" data-without="10" data-with="20">10 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Кинуть мячик</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="15">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 15</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="2" data-with="4">2 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Дрессировка</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="15">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 15</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="2" data-with="4">2 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Ставка в колесе</td>
-                    <td></td>
-                    <td class="reward" data-without="3" data-with="6">3 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Метро</td>
-                    <td></td>
-                    <td class="reward" data-without="2" data-with="4">2 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Рыбалка</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="20">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 20</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="4" data-with="8">4 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Задания клуба</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="2">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 2</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="4" data-with="8">4 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Автосервис</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Баскетбол</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="2">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 2</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Футбол</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="2">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 2</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Армреслинг</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Дартс</td>
-                    <td></td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="left-cell">Волейбол</td>
-                    <td class="lottery-cell">
-                        <div class="lottery-controls" data-target="10">
-                            <button class="down-arrow arrow-btn">↓</button>
-                            <span class="quantity-display">0</span>
-                            <span class="data-target">/ 10</span>
-                            <button class="up-arrow arrow-btn">↑</button>
-                        </div>
-                    </td>
-                    <td class="reward" data-without="1" data-with="2">1 BP</td>
-                    <td class="checkbox-cell">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" class="task-checkbox">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    </div>
+
+    <div id="editOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color:var(--accent); margin-bottom:20px;">НАСТРОЙКИ</h2>
+            <div class="avatar-picker" id="editAvatars"></div>
+            <input type="text" id="editNick" placeholder="Новый никнейм">
+            <button id="submitEdit" class="m-btn prm">СОХРАНИТЬ</button>
+            <button class="m-btn secondary close-modal" style="margin-top:10px;">ЗАКРЫТЬ</button>
         </div>
-        <div class="hide-on-scroll">
-            <button id="dragToggle" class="icon-btn" title="Переместить">
-                <i id="dragIcon" class="fi fi-rr-edit"></i>
+    </div>
+
+    <div id="warningOverlay" class="modal-overlay" style="background: rgba(0,0,0,0.9);">
+        <div class="warning-box" style="background:var(--card); border-radius:24px; padding:30px; text-align:center; max-width:320px; border:1px solid var(--line);">
+            <div style="color:var(--accent); font-size:40px; margin-bottom:15px;"><i class="fi fi-rr-alert-triangle"></i></div>
+            <p style="margin-bottom:20px; font-weight:600; line-height:1.4;">Функция настройки списка<br>доступна только после входа в аккаунт!</p>
+            <button class="m-btn prm open-auth" style="margin-bottom:10px;">ВОЙТИ В АККАУНТ</button>
+            <button class="m-btn secondary close-modal">ОТМЕНА</button>
+        </div>
+    </div>
+
+    <div id="resetConfirmOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <div style="color:var(--danger); font-size:48px; margin-bottom:15px;">
+                <i class="fi fi-rr-exclamation"></i>
+            </div>
+            <h2 style="margin-bottom:10px; color:var(--text);">СБРОСИТЬ?</h2>
+            <p style="margin-bottom:25px; font-size:14px; color:var(--dim); line-height:1.4;">
+                Вы уверены, что хотите полностью обнулить свой прогресс? <br>Это действие нельзя будет отменить.
+            </p>
+            <button id="confirmResetAction" class="m-btn prm" style="background:var(--danger); margin-bottom:10px;">
+                ДА, ОБНУЛИТЬ
             </button>
-            <button id="resetBtn">СБРОСИТЬ</button>
-            <button id="themeToggle" class="icon-btn theme-toggle">
-                <i class="fi fi-br-eclipse-alt"></i>
-            </button>
+            <button class="m-btn secondary close-modal">ОТМЕНА</button>
         </div>
-    </div>    
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-        <script src="script.js"></script>
-  
-    </body>
+    </div>
+
+    <div id="logoutConfirmOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <div style="color:var(--accent); font-size:48px; margin-bottom:15px;">
+                <i class="fi fi-rr-exit"></i>
+            </div>
+            <h2 style="margin-bottom:10px;">ВЫЙТИ?</h2>
+            <p style="margin-bottom:25px; font-size:14px; color:var(--dim); line-height:1.4;">
+                Вы собираетесь выйти из аккаунта. <br>Чтобы вернуться к своим задачам, потребуется снова ввести пароль.
+            </p>
+            <button id="confirmLogoutAction" class="m-btn prm" style="margin-bottom:10px;">
+                ВЫЙТИ ИЗ ПРОФИЛЯ
+            </button>
+            <button class="m-btn secondary close-modal">ОТМЕНА</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-app-container"></div>
+
+    <script src="script.js"></script>
+</body>
 </html>

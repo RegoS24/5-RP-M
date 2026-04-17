@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BP Admin Database</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { display: block; overflow-x: auto; padding: 20px; background: #000; }
+        .admin-page { max-width: 1000px; margin: 0 auto; }
+        .db-card { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid var(--line); margin-bottom: 20px; overflow-x: auto; }
+        .db-table { width: 100%; border-collapse: collapse; min-width: 600px; margin-top: 15px; }
+        .db-table th { color: var(--dim); text-align: left; padding: 12px; border-bottom: 2px solid var(--line); font-size: 11px; text-transform: uppercase; }
+        .db-table td { padding: 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+        .del-btn { color: var(--danger); cursor: pointer; background: none; border: none; font-weight: bold; font-size: 16px; }
+    </style>
+</head>
+<body class="is-admin" data-theme="dark">
+    <div class="admin-page">
+        <div id="adminLoginOverlay" class="modal-overlay" style="display:flex;">
+            <div class="modal-box">
+                <h2 style="color:var(--accent); margin-bottom:20px; text-align:center;">ADMIN ACCESS</h2>
+                <input type="password" id="admKey" placeholder="Введите ПИН-код" style="text-align:center; letter-spacing: 5px;">
+                <button id="admSubmit" class="m-btn prm">ВОЙТИ</button>
+                <a href="index.html" style="display:block; text-align:center; margin-top:20px; color:var(--dim); font-size:12px; text-decoration:none;">Вернуться назад</a>
+            </div>
+        </div>
+
+        <div id="errorPinOverlay" class="modal-overlay" style="display:none;">
+            <div class="modal-box" id="errorPinBox">
+                <div style="color:var(--danger); font-size:48px; margin-bottom:15px; text-align:center;">
+                    <i class="fi fi-rr-cross-circle"></i>
+                </div>
+                <h2 style="text-align:center; margin-bottom:10px;">ОШИБКА ПИН</h2>
+                <p style="text-align:center; color:var(--dim); margin-bottom:20px;">Доступ запрещен. Проверьте правильность кода.</p>
+                <button id="closeErrorBtn" class="m-btn prm" style="background:var(--danger);">ПОПРОБОВАТЬ СНОВА</button>
+            </div>
+        </div>
+
+        <div id="adminContent" style="display:none;">
+            <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1 style="color:var(--accent)">БАЗА ДАННЫХ</h1>
+                <a href="index.html" class="m-btn prm" style="width:auto; padding:10px 20px; text-decoration:none;">В ТРЕКЕР</a>
+            </header>
+
+            <div class="db-card">
+                <h3>ПОЛЬЗОВАТЕЛИ</h3>
+                <table class="db-table">
+                    <thead>
+                        <tr>
+                            <th>Логин</th>
+                            <th>Ник</th>
+                            <th>BP</th>
+                            <th>Код</th>
+                            <th>Пароль</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userList"></tbody>
+                </table>
+            </div>
+
+            <div class="db-card">
+                <h3>ГЛОБАЛЬНЫЕ ЗАДАНИЯ</h3>
+                <div id="taskAdminList"></div>
+                <button id="btnOpenAddTask" class="m-btn prm" style="width:auto; padding:10px 25px; margin-top:20px;">+ СОЗДАТЬ ЗАДАНИЕ</button>
+            </div>
+
+            <div class="admin-card" style="margin-top: 25px; padding: 20px; background: var(--card); border-radius: 16px; border: 1px solid var(--line);">
+                <div class="card-header" style="margin-bottom: 15px;">
+                    <h3 style="text-transform: uppercase; letter-spacing: 1px; font-size: 16px;">
+                        <i class="fi fi-rr-comment" style="margin-right: 8px; color: var(--accent);"></i>
+                        Модерация чата
+                    </h3>
+                    <p style="font-size: 11px; color: var(--dim); margin-top: 4px;">
+                        Нажмите на сообщение, чтобы удалить его из истории.
+                    </p>
+                </div>
+                
+                <div id="chatMessages" class="chat-container" style="height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="addTaskModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="color:var(--accent); margin-bottom:20px;">НОВОЕ ЗАДАНИЕ</h3>
+            <input type="text" id="ntName" placeholder="Название (напр. Сбор монет)">
+            <input type="number" id="ntTarget" placeholder="Цель (количество)">
+            <input type="number" id="ntBase" placeholder="Base BP (награда)">
+            <input type="number" id="ntVip" placeholder="Vip BP (награда)">
+            <button id="confirmAddTask" class="m-btn prm">СОЗДАТЬ</button>
+            <button class="m-btn secondary close-modal" style="margin-top:10px;">ОТМЕНА</button>
+        </div>
+    </div>
+    <div id="chatAdminMenu" class="modal-overlay" style="display:none; z-index: 1000;">
+        <div class="modal-box">
+            <h3 style="margin-bottom:10px;">Удалить?</h3>
+            <p style="font-size: 14px; color: var(--dim); margin-bottom: 20px;">Это действие удалит сообщение для всех пользователей.</p>
+            <button onclick="deleteMessage()" class="m-btn prm" style="background:var(--danger); margin-bottom:10px;">УДАЛИТЬ</button>
+            <button class="m-btn secondary" onclick="document.getElementById('chatAdminMenu').style.display='none'">ОТМЕНА</button>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-app-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

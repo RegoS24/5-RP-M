@@ -1,464 +1,368 @@
-* {
-  margin: 0;
-  padding: 0;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  box-sizing: border-box;
-}
+/* Блокировка выделения интерфейса для эффекта мобильного приложения */
+* { -webkit-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+input, textarea { -webkit-user-select: text; -ms-user-select: text; user-select: text; }
 
 :root {
-  --checkbox-size: 32px;
-  --lottery-quantity-min-width: 18px;
-  --lottery-btn-size: 28px;
-  --bg-color: #737373;
-  --text-arrow: #f3f3f3;
-  --text-color: #ffffff;
-  --header-color: #2b2b2b;
-  --table-bg: #737373;
-  --table-bgd: #ffffffbb;
-  --table-border: #f0f0f0;
-  --button-bg: transparent;
-  --button-text: #2b2b2b;
-  --checkbox-text: #737373;
-  --checkbox-border: #737373;
-  --checkbox-checked: #f8981d;
-  --theme-btn-bg: #2b2b2b;
-  --theme-btn-text: #f3f3f3;
-  --progress-text: #fffce9;
-  --progress-bg: #737373;
-  --progress-fill-gradient: linear-gradient(90deg, #c5750d, #f8981d);
-  --custom-checkbox: #fffce9;
-  --quantity-display: #2b2b2b;
-  --drag-shadow: rgba(0, 0, 0, 0.25);
+    --bg: #0a0a0a; --card: #141414; --text: #ffffff; --dim: #888;
+    --accent: #f8981d; --line: #2a2a2a; --danger: #ff4d4d; --success: #00e676;
+}
+[data-theme="light"] {
+    --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --dim: #666; --line: #e2e8f0;
 }
 
-[data-theme="dark"] {
-  --bg-color: #151517;
-  --text-color: #f3f3f3;
-  --table-bg: #2b2b2b96;
-  --table-bgd: #1b1c20;
-  --table-border: #111111;
-  --button-text: #f3f3f3;
-  --checkbox-text: #737373;
-  --checkbox-border: #737373;
-  --progress-text: #fffce9;
-  --progress-bg: #737373;
-  --quantity-display: #f3f3f3;
-  --drag-shadow: rgba(0, 0, 0, 0.6);
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body { background: #000; color: var(--text); display: flex; justify-content: center; overflow-x: hidden; }
+
+/* ОГРАНИЧИТЕЛЬ ПРИЛОЖЕНИЯ */
+.app-wrapper { width: 100vw; max-width: 480px; min-height: 100vh; background: var(--bg); position: relative; padding-bottom: 85px; overflow-x: hidden; }
+
+/* ШАПКА И СТАТИСТИКА */
+.sticky-top { position: sticky; top: 0; z-index: 1000; background: var(--bg); border-bottom: 1px solid var(--line); }
+#headerStats { padding: 15px 20px; background: var(--card); }
+.stats-grid { display: flex; justify-content: space-between; }
+.st-label { font-size: 10px; font-weight: 800; color: var(--dim); display: block; margin-bottom: 2px;}
+.st-val { font-size: 24px; font-weight: 900; color: var(--accent); }
+.ar { text-align: right; }
+.bar-container { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 12px; }
+.bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+
+/* БУСТЕРЫ */
+.booster-panel { display: flex; gap: 10px; padding: 10px 20px; }
+.bst-card { flex: 1; background: var(--card); border: 1px solid var(--line); padding: 10px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
+.bst-card input { display: none; }
+.bst-card span { font-size: 12px; color: var(--dim); font-weight: 700; }
+.bst-card b { display: block; font-size: 11px; color: var(--accent); margin-top: 3px; }
+.bst-card input:checked + span { color: var(--accent); }
+
+/* СПИСОК ЗАДАЧ */
+.list-container { padding-bottom: 10px; padding-top: 10px; }
+.task-item { background: var(--card); margin: 8px 16px; padding: 15px; border-radius: 16px; border: 1px solid var(--line); display: flex; align-items: center; transition: all 0.2s; }
+.task-item.is-done { opacity: 0.5; filter: grayscale(1); }
+.task-item.is-hidden { display: none; }
+
+/* РЕЖИМ РЕДАКТИРОВАНИЯ (ТРЯСКА) */
+body.edit-mode-on .task-item { animation: shake 0.3s infinite; cursor: grab; }
+body.edit-mode-on .task-item.is-hidden { display: flex !important; opacity: 0.3; border-style: dashed; }
+@keyframes shake { 0%{transform:rotate(0)} 25%{transform:rotate(0.5deg)} 75%{transform:rotate(-0.5deg)} 100%{transform:rotate(0)} }
+
+.t-name { flex: 1; font-weight: 700; font-size: 14px; line-height: 1.2; }
+.t-bp { font-weight: 900; color: var(--accent); margin-right: 12px; font-size: 14px; min-width: 50px; text-align: right;}
+
+/* СЧЕТЧИК */
+.cnt-box { display: flex; align-items: center; gap: 5px; background: var(--bg); padding: 5px; border-radius: 10px; }
+.btn-c { border: none; background: var(--line); color: var(--text); width: 28px; height: 28px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; }
+.val-c { font-size: 13px; font-weight: 800; min-width: 40px; text-align: center; }
+
+/* ЧЕКБОКС ЗАДАЧИ */
+.chk-wrap { display: flex; align-items: center; cursor: pointer; }
+.chk-box { width: 28px; height: 28px; border: 2px solid var(--line); border-radius: 8px; margin-left: 12px; position: relative; transition: 0.2s; background: var(--card); }
+.task-check:checked + .chk-box { background: var(--success); border-color: var(--success); }
+.task-check:checked + .chk-box::after { content: '✓'; position: absolute; left: 6px; top: 1px; color: #fff; font-weight: bold; font-size: 16px; }
+.task-check { display: none; }
+
+/* КНОПКИ УПРАВЛЕНИЯ */
+.action-zone { padding: 10px 20px 100px; }
+.m-btn { width: 100%; padding: 15px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; font-size: 14px; text-transform: uppercase; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
+.prm { background: var(--accent); color: #fff; }
+.secondary { background: var(--card); color: var(--text); border: 1px solid var(--line); }
+.danger-btn { color: var(--danger); border: 1px solid var(--danger); background: transparent; margin-bottom: 12px; }
+
+/* НИЖНЯЯ НАВИГАЦИЯ */
+.bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; height: 75px; background: var(--card); display: flex; border-top: 1px solid var(--line); z-index: 2000; }
+.nav-tab { flex: 1; background: none; border: none; color: var(--dim); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+.nav-tab i { font-size: 20px; }
+.nav-tab.active { color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ЧАТ */
+.chat-container {
+    height: calc(100vh - 86px); 
+    display: flex;
+    flex-direction: column;
 }
 
-body {
-  max-width: 480px;
-  margin: 0 auto;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: Arial, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--button-text);
-  transition: all 0.3s ease;
-  min-height: 100vh;
+.chat-messages {
+    flex: 1;
+    overflow-y: auto !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+    scrollbar-width: none;
+    -ms-overflow-style: none; 
 }
 
-/* 2. КОНТЕЙНЕР: Центрируем и задаем базу */
-.container {
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+.chat-messages::-webkit-scrollbar {
+    display: none;
 }
 
-/* 3. ШАПКА (STICKY) */
-.total {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 12px;
-  padding: 15px 15px;
-  background-color: var(--table-border);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+/* 2. Баблы сообщений */
+.msg-bbl {
+    padding: 10px 14px;
+    border-radius: 18px;
+    max-width: 75%;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
 }
 
-.header-right {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+.msg-bbl.own { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg-bbl.other { align-self: flex-start; background: var(--card); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg-bbl b { display: block; font-size: 10px; color: var(--dim); margin-bottom: 4px; opacity: 0.8; text-transform: uppercase; }
+.msg-bbl.own b { color: rgba(255,255,255,0.7); }
+
+/* 3. Поле ввода */
+.chat-input-area {
+    padding: 12px 15px;
+    background: var(--bg);
+    border-top: 1px solid var(--line);
+    position: relative;
 }
 
-#totalDisplay, #remainingDisplay {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--checkbox-checked);
-}
-
-/* 4. ПРОГРЕСС-БАР */
-.progress-container {
-  width: 100%;
-  padding: 5px 0; /* Небольшой отступ для красоты */
-}
-
-.progress-bar {
-  position: relative;
-  width: 100%;
-  height: 24px;
-  background: var(--progress-bg);
-  border-radius: 12px;
-  overflow: hidden; /* Обрезает заливку по радиусу */
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); /* Внутренняя тень для объема */
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%; /* Начальное значение */
-  background: var(--progress-fill-gradient);
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 12px 0 0 12px;
-}
-
-.progress-percent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--progress-text) !important;
-  z-index: 10;
-  pointer-events: none;
-  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
-}
-
-/* 5. ОПЦИИ (VIP/X2) В ОДНУ СТРОКУ */
-.options {
-  display: flex;
-  justify-content: center;
-  gap: 100px;
-}
-
-.vipcheckmark, .x2checkmark {
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--checkbox-text);
-  cursor: pointer;
-}
-
-input[type="checkbox"]:checked + .vipcheckmark,
-input[type="checkbox"]:checked + .x2checkmark {
-  color: var(--checkbox-checked);
-}
-
-/* 6. ТАБЛИЦА */
-
-.table-wrapper {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.table-wrapper::-webkit-scrollbar {
-    width: 6px;
-}
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: var(--checkbox-checked);
-    border-radius: 10px;
-}
-
-.tasks-column {
-    margin: 0 auto 80px auto;
-    table-layout: fixed; /* ГАРАНТИРУЕТ, что колонки будут иметь заданную ширину % */
-    border-collapse: collapse;
-    background-color: var(--table-bgd);
-}
-
-.tasks-column td {
+.input-wrapper {
+    display: flex;
+    align-items: center;      /* Центрует всё по вертикали */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    padding: 0 8px;
     height: 50px;
-    border-bottom: 1px solid var(--table-border);
-    vertical-align: middle;
+    gap: 2px;
+    box-sizing: border-box !important; /* Не дает капсуле искажаться */
 }
 
-/* Пропорции колонок */
-.left-cell     { width: 45%; text-align: left; }
-.lottery-cell  { width: 35%; }
-.reward        { width: 15%; text-align: center; }
-.checkbox-cell { width: 20%; min-width: 50px; text-align: center; }
-
-.left-cell {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 0 10px;
-    cursor: default;
-    user-select: none;
-    -webkit-user-select: none;
+.chat-icon-btn svg, .chat-icon-btn i {
+    color: var(--accent) !important;
+    fill: var(--accent) !important;
+    width: 20px;
+    height: 20px;
 }
 
-/* Чтобы ячейки внутри летящей строки не разъехались */
-.sortable-drag td {
-    display: table-cell !important;
-    vertical-align: middle;
+/* 5. Инпут текста */
+#chatInput {
+    flex: 1;
+    background: transparent !important;
     border: none !important;
-    background-color: var(--table-bgd) !important;
+    outline: none !important;
+    color: var(--text) !important;
+    font-size: 15px;
+    height: 100% !important;
+    padding: 0 5px !important;
+    margin: 0 !important;
 }
 
-.sortable-drag .checkbox-cell {
-  width: 60px !important;
+/* 6. Панель эмодзи */
+.emoji-picker {
+    position: absolute;
+    bottom: 70px;
+    left: 15px;
+    right: 15px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-around;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    z-index: 100;
 }
 
-/* Пустое место (куда упадет карточка) */
-.sortable-ghost {
-    opacity: 0.2 !important;
-    background-color: var(--checkbox-border) !important;
-}
-
-.reward {
-    font-variant-numeric: tabular-nums;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 0 0 0 10px;
-}
-
-/* 7. ИСПРАВЛЕННЫЙ НИЖНИЙ БАР (ФИКСИРОВАННЫЙ) */
-.hide-on-scroll {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  height: 80px;
-  padding: 0 10px;
-  background-color: var(--table-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  flex-shrink: 0;
-  padding-top: 10px;
-}
-
-/* 8. КНОПКИ В БАРЕ */
-#resetBtn {
-  flex-grow: 1;
-  height: 45px;
-  background: #a50000;
-  color: rgb(255, 255, 255);
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.logo-toggle {
-  width: 45px;
-  height: 45px;
-  background: var(--checkbox-checked);
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 9. ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ */
-.custom-checkbox input, .custom-vipcheckbox input, .custom-x2checkbox input {
-  display: none;
-}
-
-.checkmark {
-  display: inline-block;
-  width: var(--checkbox-size);
-  height: var(--checkbox-size);
-  border: 2px solid var(--checkbox-border);
-  border-radius: 8px;
-  position: relative;
-  cursor: pointer;
-}
-
-.custom-checkbox input:checked + .checkmark {
-  background-color: var(--checkbox-checked);
-  border-color: var(--checkbox-checked);
-}
-
-.custom-checkbox input:checked + .checkmark::after {
-  content: '✓';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--custom-checkbox);
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 1;
-  text-align: center;
-  display: block;
-}
-
-.checkbox-cell {
-  width: 10%;
-  text-align: center;
-  min-width: 60px; 
-}
-
-.checkbox-cell .custom-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  padding: 0 10px;
-}
-
-.lottery-cell {
-  text-align: center;
-}
-
-.lottery-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  gap: 5px;
-}
-
-.lottery-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.arrow-btn {
-  width: var(--lottery-btn-size);
-  height: var(--lottery-btn-size);
-  background: var(--table-bg);
-  border: 2px solid var(--checkbox-border);
-  color: var(--custom-checkbox);
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 1
-}
-
-.arrow-btn:active {
-  transform: scale(0.9);
-}
-
-.arrow-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  pointer-events: none; /* Полностью отключает клики на уровне браузера */
-}
-
-.quantity-display {
-  width: 20px;
-  color: var(--quantity-display);
-}
-
-.data-target {
-  width: 25px;
-}
-
-.done .left-cell, 
-.done .reward,
-.done .lottery-controls {
-  opacity: 0.1;
-  filter: grayscale(0.5);
-}
-
-.arrow-btn:focus, 
-#themeToggle:focus, 
-#resetBtn:focus {
-    outline: none;
-}
-
-/* --- КНОПКА АКТИВИЗАЦИИ (Bottom Bar) --- */
-.icon-btn {
-    width: 45px;
-    height: 45px;
-    background: transparent;
-    border-color: transparent;
-    background-color: var(--checkbox-checked) !important;
-    color: var(--table-border) !important;
-    border-radius: 50%;
+.emoji-picker span {
+    font-size: 28px;
     cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.emoji-picker span:hover { transform: scale(1.2); }
+
+.chat-icon-btn, #emojiBtn, #sendMsg {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;     /* Убивает любые скрытые отступы */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    flex-shrink: 0;
+    cursor: pointer !important;
+    transition: transform 0.1s ease;
+}
+
+/* Эффекты при наведении и клике */
+.chat-icon-btn:hover, #emojiBtn:hover, #sendMsg:hover {
+    opacity: 0.8;
+}
+
+.chat-icon-btn:active, #emojiBtn:active, #sendMsg:active {
+    transform: scale(0.85); /* Эффект физического нажатия (пружинка) */
+}
+
+#emojiBtn {
+    font-size: 24px !important;
+    line-height: 0 !important; /* Прибивает смайл ровно в центр */
+}
+
+#sendMsg i, #sendMsg svg {
+    font-size: 20px !important;
+    color: var(--accent) !important;
+    line-height: 0 !important; /* Прибивает самолетик ровно в центр */
+    display: block !important;
+}
+
+.toast-app-container {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 11000; /* Выше всех модалок */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 90%;
+    max-width: 360px;
+    pointer-events: none;
+}
+
+.app-toast {
+    background: rgba(20, 20, 20, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: toastSlideDown 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.app-toast-icon {
+    width: 34px;
+    height: 34px;
+    background: var(--accent); /* Твой оранжевый */
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    font-size: 20px;
-    outline: none;
+    color: #fff;
+    font-size: 16px;
+    flex-shrink: 0;
 }
 
-.icon-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+.app-toast-message {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
 }
 
-.icon-btn:active {
-    transform: scale(0.9); /* Эффект нажатия */
+@keyframes toastSlideDown {
+    from { transform: translateY(-80px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-/* Состояние, когда режим перетаскивания ВКЛЮЧЕН */
-#dragToggle.active {
-    background-color: var(--checkbox-checked) !important;
-    color: var(--table-border) !important;
-    border-color: transparent;
+.app-toast.hide {
+    animation: toastSlideUp 0.4s ease forwards;
 }
 
-/* --- УПРАВЛЕНИЕ КУРСОРOM И ЗАХВАТОМ --- */
-
-/* 1. Когда режим включен (кнопка активна) */
-body.drag-mode-on .left-cell {
-    cursor: grab !important;
-    user-select: none !important;
-    -webkit-user-select: none !important;
+@keyframes toastSlideUp {
+    to { transform: translateY(-100px); opacity: 0; }
 }
 
-/* 2. Когда зажали левую кнопку мыши на ячейке */
-body.drag-mode-on .left-cell:active {
-    cursor: grabbing !important;
+/* Разные типы (опционально) */
+.custom-toast.success { border-left-color: var(--success); }
+.custom-toast.danger { border-left-color: var(--danger); }
+
+/* ДОСТИЖЕНИЯ */
+.ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px 20px; }
+.ach-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; text-align: center; opacity: 0.4; filter: grayscale(1); transition: 0.3s; }
+.ach-card.unlocked { opacity: 1; border-color: var(--accent); filter: grayscale(0); }
+.ach-card i { font-size: 28px; color: var(--accent); margin-bottom: 10px; display: block; }
+.ach-card b { display: block; font-size: 14px; margin-bottom: 4px; }
+.ach-card small { font-size: 11px; color: var(--dim); }
+
+/* ПРОФИЛЬ */
+.avatar-big { width: 80px; height: 80px; background: var(--card); border: 2px solid var(--accent); border-radius: 20px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.setting-item { padding: 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; font-size: 14px; }
+.setting-item i { margin-right: 10px; font-size: 16px; vertical-align: middle; }
+
+/* МОДАЛЬНЫЕ ОКНА */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-box { background: var(--card); padding: 30px; border-radius: 24px; width: 100%; max-width: 360px; text-align: center; border: 1px solid var(--line); }
+.modal-box input { width: 100%; height: 45px; padding: 0 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: #fff; font-weight: 600; outline: none;}
+
+/* ВЫБОР АВАТАРА */
+.avatar-picker { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; }
+.av-opt { font-size: 28px; cursor: pointer; padding: 8px; border-radius: 12px; border: 2px solid transparent; transition: 0.2s; background: var(--bg); }
+.av-opt.active { border-color: var(--accent); background: var(--line); }
+
+/* Анимация тряски при ошибке ПИН КОДА в админке */
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+.shake-anim { animation: shake 0.3s ease-in-out 2; }
+
+/* ЧАТ */
+.msg-content { display: flex; justify-content: space-between; align-items: flex-end; flex-direction: column; gap: 10px; }
+.msg-text { word-break: break-word; }
+
+.msg-time { 
+    font-size: 10px; 
+    align-self: flex-end; 
+    margin-top: 4px; 
+    color: rgba(255, 255, 255, 0.6); /* Светло-серый, хорошо виден на темном */
+    font-weight: 400;
+    letter-spacing: 0.3px;
 }
 
-/* 3. ФИКСАЦИЯ КУЛАЧКА во время движения (чтобы не разжимался) */
-body.is-dragging, 
-body.is-dragging * {
-    cursor: grabbing !important;
+.msg-user { font-size: 11px; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+.msg-bbl.own .msg-user { display: none; }
+.msg-row { display: flex; align-items: flex-end; margin-bottom: 5px; gap: 8px; }
+.msg-row.own { flex-direction: row-reverse; }
+.msg-avatar { width: 35px; height: 35px; background: var(--card); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+.msg-bbl { padding: 8px 12px; border-radius: 15px; max-width: 75%; }
+
+.msg-row.other .msg-bbl { 
+    background: var(--card); /* Глубокий темный */
+    border: 1px solid var(--line); 
+    border-bottom-left-radius: 4px; 
+    color: var(--text);
 }
 
-/* Дополнительно: стиль летящей карточки для SortableJS */
-.sortable-drag {
-  display: table !important; /* Критично: заставляем клон работать как таблица */
-  width: 100% !important;
-  max-width: 480px !important;
-  table-layout: fixed !important; /* Чтобы проценты ширины внутри работали */
-  opacity: 1 !important;
-  background-color: var(--table-bgd) !important;
-  box-shadow: 0 15px 35px var(--drag-shadow) !important;
-  transform: scale(1.02); 
-  z-index: 9999 !important;
-  border-radius: 8px;
-  border-collapse: collapse; /* Чтобы не было лишних отступов */
+.msg-row.own .msg-bbl { 
+    background: var(--card); /* Чуть светлее фона, но не кричащий */
+    color: var(--text); 
+    border: 1px solid var(--accent); /* Оставляем оранжевый только как тонкий акцент на рамке */
+    border-bottom-right-radius: 4px; 
+    box-shadow: 0 4px 15px rgba(248, 152, 29, 0.1); /* Легкое оранжевое свечение */
 }
 
-/* Скрываем пустое место (куда упадет карточка) */
-.sortable-ghost {
-    opacity: 0.2 !important;
-    background-color: var(--checkbox-border) !important;
+.msg-row.own .msg-text {
+    color: var(--text);
+}
+
+.msg-row.own .msg-time {
+    color: var(--dim);
+}
+
+/* МОДЕРАЦИЯ ЧАТА */
+.is-admin .msg-row { cursor: pointer; transition: opacity 0.2s; }
+.is-admin .msg-row:hover { opacity: 0.8; }
+.is-admin .msg-row:hover .msg-bbl { border-color: var(--danger) !important; background: rgba(255, 0, 0, 0.05) !important; }
+.chat-container {
+    scroll-behavior: smooth; 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: auto;
+}
+.chat-container::-webkit-scrollbar {
+    display: none;
+}
+.chat-container::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 10px;
 }
